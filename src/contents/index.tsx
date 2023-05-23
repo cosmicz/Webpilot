@@ -97,7 +97,6 @@ export default function Index() {
 
     if (req.name === MESSAGING_EVENT.GET_DOCUMENT) {
       const article = document.documentElement.outerHTML
-      console.log("This is the article I am getting: " + article)
       res.send(article)
       return
     }
