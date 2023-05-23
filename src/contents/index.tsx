@@ -2,14 +2,14 @@ import 'rc-tooltip/assets/bootstrap.css'
 import cssText from 'data-text:./index.scss'
 import Logo from 'data-base64:~assets/icon.png'
 
-import {useCallback, useEffect, useRef, useState} from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
-import {sendToBackground} from '@plasmohq/messaging'
-import {useMessage} from '@plasmohq/messaging/hook'
-import {Readability} from '@mozilla/readability'
+import { sendToBackground } from '@plasmohq/messaging'
+import { useMessage } from '@plasmohq/messaging/hook'
+import { Readability } from '@mozilla/readability'
 
-import {MESSAGING_EVENT, ROUTE} from '@/config'
-import {getSelectedText, getSelectedTextPosition} from '@/utils'
+import { MESSAGING_EVENT, ROUTE } from '@/config'
+import { getSelectedText, getSelectedTextPosition } from '@/utils'
 
 import useConfig from '@/hooks/use-config'
 
@@ -25,12 +25,12 @@ export default function Index() {
   const [lockOverlay, setLockOverlay] = useState(false)
   const [floatingLogoVisible, setFloatingLogoVisible] = useState(false)
 
-  const {config, setConfig} = useConfig()
+  const { config, setConfig } = useConfig()
   const [isAskPage, setIsAskPage] = useState(false)
-  const {isAuth, autoPopup, turboMode} = config
-  const [mousePosition, setMousePosition] = useState({x: 0, y: 0})
-  const [logoPosition, setLogoPosition] = useState({x: 0, y: 0})
-  const [framePosition, setFramePosition] = useState({x: 0, y: 0})
+  const { isAuth, autoPopup, turboMode } = config
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [logoPosition, setLogoPosition] = useState({ x: 0, y: 0 })
+  const [framePosition, setFramePosition] = useState({ x: 0, y: 0 })
   const [iFrameSize, setIframeSize] = useState({
     height: 142,
     width: 460,
@@ -48,7 +48,7 @@ export default function Index() {
     }
 
     if (req.name === MESSAGING_EVENT.SYNC_FRAME_SIZE) {
-      const {width, height} = req.body
+      const { width, height } = req.body
 
       if (width) {
         setIframeSize({
@@ -72,7 +72,7 @@ export default function Index() {
         setLockOverlay(false)
         setFloatingLogoVisible(true)
       }
-      setDragPosition({x: 0, y: 0})
+      setDragPosition({ x: 0, y: 0 })
 
       hideOverLay()
 
@@ -88,7 +88,7 @@ export default function Index() {
         } else {
           showAskPage()
           setTimeout(() => {
-            sendToBackground({name: MESSAGING_EVENT.INPUT_FOCUS})
+            sendToBackground({ name: MESSAGING_EVENT.INPUT_FOCUS })
           }, 100)
         }
       }
@@ -96,13 +96,17 @@ export default function Index() {
     }
 
     if (req.name === MESSAGING_EVENT.GET_DOCUMENT) {
-      let article = {}
-      try {
-        const cloneNode = document.cloneNode(true)
-        article = new Readability(cloneNode).parse()
-      } catch (error) {}
-      if (article?.textContent) res.send(article.textContent)
+      const article = document.documentElement.outerHTML
+      console.log("This is the article I am getting: " + article)
+      res.send(article)
+      return
     }
+
+    // if (req.name === MESSAGING_EVENT.GET_FULL_HTML) {
+    //   const doc = document.documentElement.outerHTML
+    //   res.send(doc)
+    //   return
+    // }
   })
 
   const showAskPage = () => {
@@ -137,9 +141,9 @@ export default function Index() {
         body: selectedText,
       })
 
-      const {clientX, clientY} = e
+      const { clientX, clientY } = e
       setTimeout(() => {
-        setMousePosition({x: clientX, y: clientY})
+        setMousePosition({ x: clientX, y: clientY })
       }, 200)
     }
 
@@ -157,11 +161,11 @@ export default function Index() {
           body: selecteText,
         })
 
-        const {x, y} = getSelectedTextPosition()
+        const { x, y } = getSelectedTextPosition()
 
         setTimeout(() => {
           setFloatingLogoVisible(true)
-          setMousePosition({x, y})
+          setMousePosition({ x, y })
         })
       }
     }
@@ -214,13 +218,13 @@ export default function Index() {
     setTimeout(() => {
       setFloatingLogoVisible(false)
 
-      sendToBackground({name: MESSAGING_EVENT.INPUT_FOCUS})
+      sendToBackground({ name: MESSAGING_EVENT.INPUT_FOCUS })
     }, 400)
   }
 
   const hideOverLay = () => {
     setOverlayVisible(false)
-    sendToBackground({name: MESSAGING_EVENT.CLEAN_DATA})
+    sendToBackground({ name: MESSAGING_EVENT.CLEAN_DATA })
   }
 
   const handleDragStart = () => {
@@ -228,9 +232,9 @@ export default function Index() {
   }
 
   const handleDragEnd = (e, data) => {
-    const {x, y} = data
+    const { x, y } = data
     setScrollYOffset(0)
-    setDragPosition({x, y})
+    setDragPosition({ x, y })
   }
 
   const showSelectPopup = () => {
@@ -251,7 +255,7 @@ export default function Index() {
         y: 20,
       }
 
-      let {x, y} = mousePosition
+      let { x, y } = mousePosition
 
       // left edge
       x = x < LOGO_WIDTH ? LOGO_WIDTH + LOGO_OFFSET.x : x
@@ -270,7 +274,7 @@ export default function Index() {
           ? window.innerHeight - (LOGO_WIDTH + LOGO_OFFSET.y)
           : y + LOGO_OFFSET.y
 
-      setLogoPosition({x, y})
+      setLogoPosition({ x, y })
     }
   }, [mousePosition, floatingLogoVisible])
 
@@ -308,7 +312,7 @@ export default function Index() {
       y: 20,
     }
     if (overlayVisible) {
-      let {x, y} = mousePosition
+      let { x, y } = mousePosition
 
       if (window.innerWidth > FRAME_WIDTH + EDGE_OFFEST) {
         // left edge
@@ -325,7 +329,7 @@ export default function Index() {
           ? window.innerHeight - (FRAME_HEIGHT + EDGE_OFFEST + FRMAE_OFFSET.y)
           : y + FRMAE_OFFSET.y
 
-      setFramePosition({x, y})
+      setFramePosition({ x, y })
     }
   }, [mousePosition, overlayVisible])
 
@@ -337,7 +341,7 @@ export default function Index() {
         setLockOverlay(false)
         setFloatingLogoVisible(true)
       }
-      setDragPosition({x: 0, y: 0})
+      setDragPosition({ x: 0, y: 0 })
 
       hideOverLay()
     }
@@ -375,15 +379,15 @@ export default function Index() {
           style={
             !isAuth
               ? {
-                  top: '4px',
-                  right: '25px',
-                }
+                top: '4px',
+                right: '25px',
+              }
               : isAskPage
-              ? {
+                ? {
                   top: (window.innerHeight - 131) / 2 - 80,
                   left: (window.innerWidth - 460) / 2,
                 }
-              : {
+                : {
                   left: `${framePosition.x}px`,
                   top: `${framePosition.y}px`,
                 }
@@ -433,6 +437,6 @@ export const getStyle = () => {
   return style
 }
 
-export const mountShadowHost = ({shadowHost, anchor}) => {
+export const mountShadowHost = ({ shadowHost, anchor }) => {
   anchor.element.appendChild(shadowHost)
 }

@@ -1,14 +1,14 @@
-import {useEffect, useRef} from 'react'
+import { useEffect, useRef } from 'react'
 
 import '@assets/styles/base.scss'
 import 'react-toastify/dist/ReactToastify.css'
 
-import {ToastContainer} from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import css from 'styled-jsx/css'
-import {sendToContentScript} from '@plasmohq/messaging'
+import { sendToContentScript } from '@plasmohq/messaging'
 
-import {withAIContext} from '@/components/with-ai-context'
-import {MESSAGING_EVENT, ROUTE} from '@/config'
+import { withAIContext } from '@/components/with-ai-context'
+import { MESSAGING_EVENT, ROUTE } from '@/config'
 import useConfig from '@/hooks/use-config'
 
 import EntryPanel from './prompt-board/entry-panel'
@@ -17,12 +17,11 @@ import PresetPanel from './prompt-board/preset-panel'
 const PANEL = {
   [ROUTE.PROMPT_BOARD_ENTRY_PANEL]: EntryPanel,
   [ROUTE.PROMPT_BOARD_PRESET_PANEL]: PresetPanel,
-  // [ROUTE.PROMPT_BOARD_CUSTOM_PANEL]: CustomPanel,
   [ROUTE.PROMPT_ASK_PAGE_PANEL]: PresetPanel,
 }
 
 export default withAIContext(function Index() {
-  const {config} = useConfig()
+  const { config } = useConfig()
 
   const Panel = PANEL[config.latestRoute]
 

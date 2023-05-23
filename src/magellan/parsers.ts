@@ -14,7 +14,7 @@ export function processHtml(html: string) {
   return splitDocument(docString)
 }
 
-export function squashTree(doc) {
+function squashTree(doc) {
   // compress the tree to remove unnecessary intermediate elements
   // for example, <div><div><div>hello</div></div></div> becomes <div>hello</div>
 
@@ -52,7 +52,7 @@ export function squashTree(doc) {
   processNode(doc.documentElement)
 }
 
-export function stripHtmlOfEverything(doc) {
+function stripHtmlOfEverything(doc) {
   // Recursive function to traverse and modify the DOM tree
   function processNode(node) {
     if (node.nodeType === Node.ELEMENT_NODE) {
@@ -120,7 +120,7 @@ export function hasInnerText(element) {
   return false
 }
 
-export function removeEmptySubtrees(element) {
+function removeEmptySubtrees(element) {
   const childElements = Array.from(element.children)
 
   for (const child of childElements) {
@@ -132,98 +132,98 @@ export function removeEmptySubtrees(element) {
   }
 }
 
-export function splitSubtrees(root) {
-  const subtrees = []
+// function splitSubtrees(root) {
+//   const subtrees = []
 
-  function traverse(node, subtree, depth) {
-    if (node.nodeType === 1) {
-      const serializedNode = node.outerHTML.slice(0, node.outerHTML.indexOf('>') + 1)
-      const closingTag = `</${node.tagName}>`
+//   function traverse(node, subtree, depth) {
+//     if (node.nodeType === 1) {
+//       const serializedNode = node.outerHTML.slice(0, node.outerHTML.indexOf('>') + 1)
+//       const closingTag = `</${node.tagName}>`
 
-      if (subtree.length + serializedNode.length + closingTag.length <= 2500) {
-        subtree += serializedNode
+//       if (subtree.length + serializedNode.length + closingTag.length <= 2500) {
+//         subtree += serializedNode
 
-        for (const child of node.childNodes) {
-          subtree = traverse(child, subtree, depth + 1)
-        }
+//         for (const child of node.childNodes) {
+//           subtree = traverse(child, subtree, depth + 1)
+//         }
 
-        subtree += closingTag
-      } else {
-        if (subtree.length > 0) {
-          subtrees.push(subtree)
-        }
-        subtree = serializedNode
+//         subtree += closingTag
+//       } else {
+//         if (subtree.length > 0) {
+//           subtrees.push(subtree)
+//         }
+//         subtree = serializedNode
 
-        for (const child of node.childNodes) {
-          subtree = traverse(child, subtree, depth + 1)
-        }
+//         for (const child of node.childNodes) {
+//           subtree = traverse(child, subtree, depth + 1)
+//         }
 
-        subtree += closingTag
-      }
-    } else if (node.nodeType === 3) {
-      subtree += node.nodeValue
-    }
+//         subtree += closingTag
+//       }
+//     } else if (node.nodeType === 3) {
+//       subtree += node.nodeValue
+//     }
 
-    return subtree
-  }
+//     return subtree
+//   }
 
-  const finalSubtree = traverse(root, '', 0)
-  if (finalSubtree.length > 0) {
-    subtrees.push(finalSubtree)
-  }
+//   const finalSubtree = traverse(root, '', 0)
+//   if (finalSubtree.length > 0) {
+//     subtrees.push(finalSubtree)
+//   }
 
-  return subtrees
-}
+//   return subtrees
+// }
 
-export function elementsToStrings(elements) {
-  return Array.from(elements, el => el.innerText)
-}
+// function elementsToStrings(elements) {
+//   return Array.from(elements, el => el.innerText)
+// }
 
-export function collectUserInputFields(doc) {
-  const inputTypes = [
-    'button',
-    'checkbox',
-    'color',
-    'date',
-    'datetime-local',
-    'email',
-    'file',
-    'hidden',
-    'image',
-    'month',
-    'number',
-    'password',
-    'radio',
-    'range',
-    'reset',
-    'search',
-    'submit',
-    'tel',
-    'text',
-    'time',
-    'url',
-    'week',
-  ]
-  const inputSelector = inputTypes.map(type => `input[type="${type}"]`).join(', ')
-  const elements = doc.querySelectorAll(inputSelector)
-  return Array.from(elements)
-}
+// function collectUserInputFields(doc) {
+//   const inputTypes = [
+//     'button',
+//     'checkbox',
+//     'color',
+//     'date',
+//     'datetime-local',
+//     'email',
+//     'file',
+//     'hidden',
+//     'image',
+//     'month',
+//     'number',
+//     'password',
+//     'radio',
+//     'range',
+//     'reset',
+//     'search',
+//     'submit',
+//     'tel',
+//     'text',
+//     'time',
+//     'url',
+//     'week',
+//   ]
+//   const inputSelector = inputTypes.map(type => `input[type="${type}"]`).join(', ')
+//   const elements = doc.querySelectorAll(inputSelector)
+//   return Array.from(elements)
+// }
 
-export function getInteractiveElements(document) {
-  const interactiveElements = []
+// function getInteractiveElements(document) {
+//   const interactiveElements = []
 
-  // Extract buttons, inputs, select elements, and anchors
-  const buttons = document.querySelectorAll('button')
-  const inputs = document.querySelectorAll('input')
-  const selects = document.querySelectorAll('select')
-  const anchors = document.querySelectorAll('a')
+//   // Extract buttons, inputs, select elements, and anchors
+//   const buttons = document.querySelectorAll('button')
+//   const inputs = document.querySelectorAll('input')
+//   const selects = document.querySelectorAll('select')
+//   const anchors = document.querySelectorAll('a')
 
-  // Append the extracted elements to the interactiveElements array
-  interactiveElements.push(...buttons, ...inputs, ...selects, ...anchors)
+//   // Append the extracted elements to the interactiveElements array
+//   interactiveElements.push(...buttons, ...inputs, ...selects, ...anchors)
 
-  // Return the array of interactive elements
-  return interactiveElements
-}
+//   // Return the array of interactive elements
+//   return interactiveElements
+// }
 
 function splitDocument(htmlString: string, maxChars = 2500) {
   const splitStrings = []

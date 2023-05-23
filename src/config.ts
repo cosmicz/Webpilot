@@ -1,4 +1,4 @@
-import {gettext} from './utils'
+import { gettext } from './utils'
 
 export const OPEN_AI_API = 'https://api.openai.com/v1/chat/completions'
 
