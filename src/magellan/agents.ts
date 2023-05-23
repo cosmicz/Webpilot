@@ -1,7 +1,7 @@
-import {askOpenAI, parseStream} from '@/io'
+import { askOpenAI, parseStream } from '@/io'
 
-import {chunkActionExtractor} from './models'
-import {processHtml} from './parsers'
+import { chunkActionExtractor } from './models'
+import { processHtml } from './parsers'
 
 export async function executeTestChain(authKey: string, docString: string) {
   const interactions = await extractInteractions(authKey, docString)
@@ -21,14 +21,25 @@ export async function extractInteractions(authKey: string, docString: string) {
         },
       ],
     }
-    const chunkResponseReader = await askOpenAI({authKey, model})
+    const chunkResponseReader = await askOpenAI({ authKey, model })
     const chunkResponse = await parseStream(chunkResponseReader)
     console.log('AAAAAAA')
     console.log(chunkResponse)
-    const parsedChunk = eval(chunkResponse)
+    const cleanedChunk = cleanUpJsonString(chunkResponse)
+    const parsedChunk = JSON.parse(cleanedChunk)
     console.log(parsedChunk)
     interactions = [...interactions, chunkResponse]
   }
   console.log(interactions)
   return interactions
+}
+
+function cleanUpJsonString(jsonString) {
+  // Replace single-quoted keys with double-quoted keys.
+  jsonString = jsonString.replace(/'/g, '"');
+
+  // Remove trailing commas.
+  jsonString = jsonString.replace(/,\s*([\]}])/g, '\$1');
+
+  return jsonString;
 }
