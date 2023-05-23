@@ -1,11 +1,16 @@
 import {askOpenAI} from '@/io'
 
 import {chunkActionExtractor} from './models'
-import {splitDocument} from './parsers'
+import {processHtml} from './parsers'
 
-export async function extractInteractions(html: string) {
+export async function executeTestChain(authKey: string, docString: string) {
+  const interactions = await extractInteractions(authKey, docString)
+  return interactions
+}
+
+export async function extractInteractions(authKey: string, docString: string) {
   let interactions = []
-  for (const chunk of splitDocument(html)) {
+  for (const chunk of processHtml(html)) {
     const model = {
       ...chunkActionExtractor,
       messages: [
@@ -16,7 +21,9 @@ export async function extractInteractions(html: string) {
         },
       ],
     }
-    interactions = [...interactions, await askOpenAI(model)]
+    interactions = [...interactions, await askOpenAI({authKey, model})]
+    console.log(interactio)
+    break
   }
   return interactions
 }
