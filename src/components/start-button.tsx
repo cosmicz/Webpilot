@@ -9,6 +9,10 @@ const startAnalysis = () => {
   // Send the current state to tickle agent, kick off that whole process
   let docString: string
 
+  // chrome.tabs.getCurrent(function (tab) {
+  //   docString = tab. document.documentElement.outerHTML
+  // });
+
   chrome.tabs.executeScript({code: 'document.documentElement.outerHTML'}, function (result) {
     docString = result[0]
   })
