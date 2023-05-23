@@ -107,7 +107,7 @@ const styles = css`
   }
 
   .link {
-    color: #4F5AFF;
+    color: #4f5aff;
   }
 
   .guide {

@@ -31,7 +31,7 @@ export default function PromptBoardHeader({hideTurboMode = false}) {
   return (
     <section className="header">
       <img src={LogoIcon} className="logo" />
-      <h1 className="title">{gettext('Webpilot')}</h1>
+      <h1 className="title">{gettext('Magellan')}</h1>
       {isAuth ? (
         <ul role="list" className="header-settings">
           <li className="d-inline">{turboMode ? gettext('Turbo Mode: ON') : ''}</li>
