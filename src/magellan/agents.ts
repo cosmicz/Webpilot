@@ -22,7 +22,7 @@ export async function extractInteractions(authKey: string, docString: string) {
       ],
     }
     interactions = [...interactions, await askOpenAI({authKey, model})]
-    console.log(interactio)
+    console.log(interactions)
     break
   }
   return interactions
