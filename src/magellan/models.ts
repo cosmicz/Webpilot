@@ -38,19 +38,19 @@ Match with a great <a href="/adopt-a-cat">cat</a> right <b>meow</b>.<br>
     {
       role: 'assistant',
       content: `{
-'interactions': [
+"interactions": [
 {
-'selector': '#sec-ask > a',
-'name': 'adopt-a-cat',
-'description': 'Match with a great cat right meow.'
+"selector": "#sec-ask > a",
+"name": "adopt-a-cat",
+"description": "Match with a great cat right meow."
 },
 {
-'selector': '#sec-ask .fancy-list > ul li:nth-child(2) input.check-two',
-'name': 'two',
-'description': 'two checkbox'
+"selector": "#sec-ask .fancy-list > ul li:nth-child(2) input.check-two",
+"name": "two",
+"description": "two checkbox"
 }
-], 'ctx': {
-'path': 'body div#sec-ask span.cat.fancy-list ul',
+], "ctx": {
+"path": "body div#sec-ask span.cat.fancy-list ul",
 }
 }`,
     },

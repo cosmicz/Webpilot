@@ -1,4 +1,4 @@
-import {askOpenAI} from '@/io'
+import {askOpenAI, parseStream} from '@/io'
 
 import {chunkActionExtractor} from './models'
 import {processHtml} from './parsers'
@@ -21,9 +21,14 @@ export async function extractInteractions(authKey: string, docString: string) {
         },
       ],
     }
-    interactions = [...interactions, await askOpenAI({authKey, model})]
-    console.log(interactions)
-    break
+    const chunkResponseReader = await askOpenAI({authKey, model})
+    const chunkResponse = await parseStream(chunkResponseReader)
+    console.log('AAAAAAA')
+    console.log(chunkResponse)
+    const parsedChunk = eval(chunkResponse)
+    console.log(parsedChunk)
+    interactions = [...interactions, chunkResponse]
   }
+  console.log(interactions)
   return interactions
 }
