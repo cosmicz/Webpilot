@@ -64,7 +64,7 @@ function stripHtmlOfEverything(doc) {
       }
 
       // Remove script elements
-      if (node.tagName.toLowerCase() === 'script') {
+      if (node.tagName.toLowerCase() === 'script' || node.tagName.toLowerCase() === 'style') {
         node.parentNode.removeChild(node)
       } else {
         // Process child nodes
