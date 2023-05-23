@@ -1,5 +1,6 @@
 import { MESSAGING_EVENT } from '@/config'
 import useConfig from '@/hooks/use-config'
+import { executeTestChain } from '@/magellan/agents'
 import { processHtml } from '@/magellan/parsers'
 import { sendToContentScript } from '@plasmohq/messaging'
 
