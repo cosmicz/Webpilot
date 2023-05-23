@@ -10,7 +10,7 @@ export async function executeTestChain(authKey: string, docString: string) {
 
 export async function extractInteractions(authKey: string, docString: string) {
   let interactions = []
-  for (const chunk of processHtml(html)) {
+  for (const chunk of processHtml(docString)) {
     const model = {
       ...chunkActionExtractor,
       messages: [
