@@ -1,4 +1,5 @@
-export function processHtml(html) {
+
+export function processHtml(html: string) {
   // Parse the input HTML string into a DOM tree
   const parser = new DOMParser()
   const doc = parser.parseFromString(html, 'text/html')
@@ -10,7 +11,8 @@ export function processHtml(html) {
 
   // Serialize the modified DOM tree back into an HTML string
   const serializer = new XMLSerializer()
-  return serializer.serializeToString(doc.documentElement)
+  const docString = serializer.serializeToString(doc.documentElement)
+  return splitDocument(docString);
 }
 
 export function squashTree(doc) {
@@ -222,4 +224,25 @@ export function getInteractiveElements(document) {
 
   // Return the array of interactive elements
   return interactiveElements
+}
+
+function splitDocument(htmlString: string, maxChars = 2500) {
+  const splitStrings = [];
+
+  while (htmlString.length > 0) {
+    let substring = htmlString.slice(0, maxChars);
+    let closingTagTag = substring.lastIndexOf('</');
+    let closingTagIndex = substring.lastIndexOf('>', closingTagTag);
+
+    if (closingTagIndex !== -1) {
+      substring = htmlString.slice(0, closingTagIndex + 1);
+    } else {
+      substring = htmlString.slice(0, maxChars);
+    }
+
+    splitStrings.push(substring);
+    htmlString = htmlString.slice(substring.length);
+  }
+
+  return splitStrings;
 }
