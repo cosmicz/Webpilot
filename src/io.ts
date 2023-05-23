@@ -3,7 +3,7 @@ import {OPEN_AI_API} from '@/config'
 let prevAbortController = null
 
 export async function askOpenAI({authKey, model, prompt}) {
-  model.messages = [{role: 'user', content: prompt}]
+  model.messages = model.messages || [{role: 'user', content: prompt}]
   model.stream = true
 
   const abortController = new AbortController()
