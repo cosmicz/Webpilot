@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import {useRef} from 'react'
 
 import PromptBoardHeader from '@/components/prompt-board-header'
 
