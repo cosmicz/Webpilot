@@ -1,7 +1,7 @@
-import {askOpenAI, parseStream} from '@/io'
+import { askOpenAI, parseStream } from '@/io'
 
-import {chunkActionExtractor, chunkHtmlCompressor, tickleAgentActionGenerator} from './models'
-import {processHtml} from './parsers'
+import { chunkActionExtractor, chunkHtmlCompressor, tickleAgentActionGenerator } from './models'
+import { processHtml } from './parsers'
 
 export async function executeTestChain(authKey: string, docString: string) {
   // const interactions = await extractInteractions(authKey, docString)
@@ -31,10 +31,10 @@ export function mergeDeep(target, ...sources) {
   if (isObject(target) && isObject(source)) {
     for (const key in source) {
       if (isObject(source[key])) {
-        if (!target[key]) Object.assign(target, {[key]: {}})
+        if (!target[key]) Object.assign(target, { [key]: {} })
         mergeDeep(target[key], source[key])
       } else {
-        Object.assign(target, {[key]: source[key]})
+        Object.assign(target, { [key]: source[key] })
       }
     }
   }
@@ -47,10 +47,10 @@ export async function evalChunkedModel(lmodel: object, chunks: string[], authKey
   const ctx = {}
 
   // strip resultKey from model
-  let {resultKey, ...model} = lmodel
+  let { resultKey, ...model } = lmodel
 
   for (const chunk of chunks) {
-    const content = {chunk, ctx}
+    const content = { chunk, ctx }
     model = {
       ...model,
       messages: [
@@ -61,7 +61,7 @@ export async function evalChunkedModel(lmodel: object, chunks: string[], authKey
         },
       ],
     }
-    const chunkResponseReader = await askOpenAI({authKey, model})
+    const chunkResponseReader = await askOpenAI({ authKey, model })
     const chunkResponse = await parseStream(chunkResponseReader)
     const cleanedChunk = cleanUpJsonString(chunkResponse)
     const parsedChunk = JSON.parse(cleanedChunk)
@@ -70,14 +70,14 @@ export async function evalChunkedModel(lmodel: object, chunks: string[], authKey
     // ctx = {...ctx, ...parsedChunk.ctx}
     mergeDeep(ctx, parsedChunk.ctx)
   }
-  return {results, ctx}
+  return { results, ctx }
 }
 
 export async function compressHtml(authKey: string, docString: string) {
   // DO NOT COMMIT
   authKey = authKey || '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'
 
-  const {results: compressed, ctx} = await evalChunkedModel(
+  const { results: compressed, ctx } = await evalChunkedModel(
     chunkHtmlCompressor,
     processHtml(docString),
     authKey
@@ -96,7 +96,7 @@ export async function extractInteractions(authKey: string, docString: string) {
   let interactions = []
   let ctx = {}
   for (const chunk of processHtml(docString)) {
-    const content = {chunk, ctx}
+    const content = { chunk, ctx }
     const model = {
       ...chunkActionExtractor,
       messages: [
@@ -107,7 +107,7 @@ export async function extractInteractions(authKey: string, docString: string) {
         },
       ],
     }
-    const chunkResponseReader = await askOpenAI({authKey, model})
+    const chunkResponseReader = await askOpenAI({ authKey, model })
     const chunkResponse = await parseStream(chunkResponseReader)
     const cleanedChunk = cleanUpJsonString(chunkResponse)
     let parsedChunk
@@ -154,8 +154,9 @@ export async function getJSActions(authKey: string, interactions: JSON[]): Promi
       ],
     }
     console.log('interaction string: ' + interactionString)
-    const actionJsReader = await askOpenAI({authKey, model})
+    const actionJsReader = await askOpenAI({ authKey, model })
     const actionJs = await parseStream(actionJsReader)
+    console.log("Current set of actions: " + actionJs)
     actionsJavaScript.push(actionJs)
   }
 

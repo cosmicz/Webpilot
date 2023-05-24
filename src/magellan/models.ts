@@ -81,7 +81,7 @@ For each json blob you will return the javascript necessary to actually interact
 Each Json blob will contain a unique id, as well as a css selector to uniquely identify that element. You will also get a name and description of that element. You should use all of that information to infer how to interact with it correctly, and write the javascript that will perform that interaction.
 
 You will also be provided a context, inside of the 'ctx' json key, which can be used to further infer how to navigate the page.
-After being provided the json, please respond using javascript only - nothing else.
+After being provided the json, please respond by adding the javascript code into the provided json blob by adding an additional key named "tickler" which you populate with the javascript code that you write, escaped correctly. You should then return the entirety of the json blob.
 `,
     },
     {
@@ -104,30 +104,49 @@ After being provided the json, please respond using javascript only - nothing el
         "description": "Dropdown menu with options related to cats and kittens"
         }
         ], "ctx": {
-        "path": "body > div.menu-wrap.menu-level-0 > ul.menu",
+        "path": "body > div.menu-wrap.menu-level-0 > ul.menu"
         }
         }`,
     },
     {
       role: 'assistant',
       content: `
-      // Interaction 1: Dropdown menu for "Adopt or Get Involved"
-      var adoptOrGetInvolvedButton = document.querySelector("button:contains('Adopt or Get Involved')");
-      if (adoptOrGetInvolvedButton) {
-        adoptOrGetInvolvedButton.click();
-      }
-
-      // Interaction 2: Dropdown menu for "Dogs & Puppies"
-      var dogsAndPuppiesButton = document.querySelector("button:contains('Dogs & Puppies')");
-      if (dogsAndPuppiesButton) {
-        dogsAndPuppiesButton.click();
-      }
-
-      // Interaction 3: Dropdown menu for "Cats & Kittens"
-      var catsAndKittensButton = document.querySelector("button:contains('Cats & Kittens')");
-      if (catsAndKittensButton) {
-        catsAndKittensButton.click();
-      }
+      {
+        "interactions": [
+        {
+        "selector": "button:contains('Adopt or Get Involved')",
+        "name": "Adopt or Get Involved",
+        "description": "Dropdown menu with options related to adopting or getting involved",
+        "tickler": "// Interaction 1: Dropdown menu for \"Adopt or Get Involved\"
+          var adoptOrGetInvolvedButton = document.querySelector(\"button:contains('Adopt or Get Involved')\");
+          if (adoptOrGetInvolvedButton) {
+            adoptOrGetInvolvedButton.click();
+          }"
+        },
+        {
+        "selector": "button:contains('Dogs & Puppies')",
+        "name": "Dogs & Puppies",
+        "description": "Dropdown menu with options related to dogs and puppies",
+        "tickler": "// Interaction 2: Dropdown menu for \"Dogs & Puppies\"
+          var dogsAndPuppiesButton = document.querySelector(\"button:contains('Dogs & Puppies')\");
+          if (dogsAndPuppiesButton) {
+            dogsAndPuppiesButton.click();
+          }"
+        },
+        {
+        "selector": "button:contains('Cats & Kittens')",
+        "name": "Cats & Kittens",
+        "description": "Dropdown menu with options related to cats and kittens",
+        "tickler": "// Interaction 3: Dropdown menu for \"Cats & Kittens\"
+        var catsAndKittensButton = document.querySelector(\"button:contains('Cats & Kittens')\");
+        if (catsAndKittensButton) {
+          catsAndKittensButton.click();
+        }"  
+        }
+        ], "ctx": {
+        "path": "body > div.menu-wrap.menu-level-0 > ul.menu"
+        }
+        }
       `,
     },
   ],
