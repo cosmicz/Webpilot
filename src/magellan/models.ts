@@ -1,6 +1,6 @@
 export const chunkActionExtractor = {
   model: 'gpt-3.5-turbo',
-  temperature: 1,
+  temperature: 0,
   top_p: 0.9,
   frequency_penalty: 0,
   presence_penalty: 0,
@@ -50,9 +50,110 @@ Match with a great <a href="/adopt-a-cat">cat</a> right <b>meow</b>.<br>
 "description": "two checkbox"
 }
 ], "ctx": {
-"path": "body div#sec-ask span.cat.fancy-list ul",
+"path": "body div#sec-ask span.cat.fancy-list ul"
 }
 }`,
     },
   ],
 }
+
+export const tickleAgentActionGenerator = {
+  model: 'gpt-3.5-turbo',
+  temperature: 0,
+  top_p: 0.9,
+  frequency_penalty: 0,
+  presence_penalty: 0,
+  stop: '<|endoftext|>',
+  messages: [
+    {
+      role: 'system',
+      content: `
+You (the server) are a web crawling agent.
+Possible interactions with a page will be sent to you in json format, and you will need to write javascript that would allow for the page to be surfed based on the actions provided.
+You are communicating directly with a programmatic agent (the client) who will take the javascript that you are sending and run it to actually crawl the web page.
+Be concise so as to be speedy and reduce token usage.
+Be precise as accuracy is most important.
+
+The client will pass a json blob describing a possible interaction that can be taken.
+For each json blob you will return the javascript necessary to actually interact with the element, which will depend on what the element type is.
+Each Json blob will contain a unique id, as well as a css selector to uniquely identify that element. You will also get a name and description of that element. You should use all of that information to infer how to interact with it correctly, and write the javascript that will perform that interaction.
+
+You will also be provided a context, inside of the 'ctx' json key, which can be used to further infer how to navigate the page.
+After being provided the json, please respond using javascript only - nothing else.
+`,
+    },
+    {
+      role: 'user',
+      content: `{
+        "interactions": [
+        {
+        "selector": "button:contains('Adopt or Get Involved')",
+        "name": "Adopt or Get Involved",
+        "description": "Dropdown menu with options related to adopting or getting involved"
+        },
+        {
+        "selector": "button:contains('Dogs & Puppies')",
+        "name": "Dogs & Puppies",
+        "description": "Dropdown menu with options related to dogs and puppies"
+        },
+        {
+        "selector": "button:contains('Cats & Kittens')",
+        "name": "Cats & Kittens",
+        "description": "Dropdown menu with options related to cats and kittens"
+        }
+        ], "ctx": {
+        "path": "body > div.menu-wrap.menu-level-0 > ul.menu",
+        }
+        }`,
+    },
+    {
+      role: 'assistant',
+      content: `// Interaction 1: Dropdown menu for "Adopt or Get Involved"
+      var adoptOrGetInvolvedButton = document.querySelector("button:contains('Adopt or Get Involved')");
+      if (adoptOrGetInvolvedButton) {
+        adoptOrGetInvolvedButton.click();
+      }
+      
+      // Interaction 2: Dropdown menu for "Dogs & Puppies"
+      var dogsAndPuppiesButton = document.querySelector("button:contains('Dogs & Puppies')");
+      if (dogsAndPuppiesButton) {
+        dogsAndPuppiesButton.click();
+      }
+      
+      // Interaction 3: Dropdown menu for "Cats & Kittens"
+      var catsAndKittensButton = document.querySelector("button:contains('Cats & Kittens')");
+      if (catsAndKittensButton) {
+        catsAndKittensButton.click();
+      }
+      `,
+    },
+  ],
+}
+
+/*
+
+Sample response
+
+{
+"interactions": [
+{
+"selector": "button:contains('Adopt or Get Involved')",
+"name": "Adopt or Get Involved",
+"description": "Dropdown menu with options related to adopting or getting involved"
+},
+{
+"selector": "button:contains('Dogs & Puppies')",
+"name": "Dogs & Puppies",
+"description": "Dropdown menu with options related to dogs and puppies"
+},
+{
+"selector": "button:contains('Cats & Kittens')",
+"name": "Cats & Kittens",
+"description": "Dropdown menu with options related to cats and kittens"
+}
+], "ctx": {
+"path": "body > div.menu-wrap.menu-level-0 > ul.menu",
+}
+}
+
+*/

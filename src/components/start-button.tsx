@@ -1,6 +1,6 @@
 import { MESSAGING_EVENT } from '@/config'
 import useConfig from '@/hooks/use-config'
-import { executeTestChain } from '@/magellan/agents'
+import { executeTestChain, getJSActions } from '@/magellan/agents'
 import { processHtml } from '@/magellan/parsers'
 import { sendToContentScript } from '@plasmohq/messaging'
 
@@ -15,9 +15,10 @@ const startAnalysis = async (authKey) => {
   // Send the current state to tickle agent, kick off that whole process
 
   const docString = await sendToContentScript({ name: MESSAGING_EVENT.GET_DOCUMENT })
-  // const chunks = processHtml(docString)
 
-  const testChain = executeTestChain(authKey, docString)
+  const testChain = await executeTestChain(authKey, docString)
 
-  return testChain
+  const actions = await getJSActions(authKey, testChain)
+
+  return actions
 }
