@@ -36,10 +36,13 @@ export async function extractInteractions(authKey: string, docString: string) {
 
 function cleanUpJsonString(jsonString) {
   // Replace single-quoted keys with double-quoted keys.
-  jsonString = jsonString.replace(/'/g, '"');
+  jsonString = jsonString.replace(/'/g, '"')
 
   // Remove trailing commas.
-  jsonString = jsonString.replace(/,\s*([\]}])/g, '\$1');
+  jsonString = jsonString.replace(/,\s*([\]}])/g, '$1')
 
-  return jsonString;
+  // Concatenate strings split with +
+  jsonString = jsonString.replace(/"\s*\+\s*"/g, '')
+
+  return jsonString
 }
