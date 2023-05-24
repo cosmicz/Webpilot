@@ -5,6 +5,7 @@ export const chunkActionExtractor = {
   frequency_penalty: 0,
   presence_penalty: 0,
   stop: '<|endoftext|>',
+  resultKey: 'interactions',
   messages: [
     {
       role: 'system',
@@ -12,7 +13,7 @@ export const chunkActionExtractor = {
 You (the server) are an html parsing agent.
 html will be streamed to you in chunks.
 You are communicating directly with a programmatic agent (the client).
-Respond using json objects only.
+Respond using valid json objects only.
 Be concise so as to be speedy and reduce token usage.
 Be precise as accuracy is most important.
 
@@ -21,11 +22,11 @@ For each chunk you will return a context object (ctx), and a list of interaction
 The client will include the ctx object with the next chunk.
 The context object's structure is up to you, but it must be json serializable.
 For each action or interactable element (anchor, button, input, checkbox, etc) present in the chunk, return it in the actions list
-For each action, return a unique id, a css selector that uniquely identifies it, a name, and a description `,
+For each action, a css selector that uniquely identifies it, a name, and a description `,
     },
     {
       role: 'user',
-      content: `<body>
+      content: `{"ctx": {}, "chunk": "<body>
 <div id="sec-head" class="head"><h1>Adopt a pet<h1></div>
 <div id="sec-ask" class="pane-ask">
 Match with a great <a href="/adopt-a-cat">cat</a> right <b>meow</b>.<br>
@@ -33,7 +34,7 @@ Match with a great <a href="/adopt-a-cat">cat</a> right <b>meow</b>.<br>
 <li>one</li>
 <li>two
 <input class="check-two" type="checkbox" name="two" value="two"/> two checkbox
-</li>`,
+</li>"}`,
     },
     {
       role: 'assistant',
@@ -64,6 +65,7 @@ export const tickleAgentActionGenerator = {
   frequency_penalty: 0,
   presence_penalty: 0,
   stop: '<|endoftext|>',
+  resultKey: 'compressed',
   messages: [
     {
       role: 'system',
@@ -108,18 +110,19 @@ After being provided the json, please respond using javascript only - nothing el
     },
     {
       role: 'assistant',
-      content: `// Interaction 1: Dropdown menu for "Adopt or Get Involved"
+      content: `
+      // Interaction 1: Dropdown menu for "Adopt or Get Involved"
       var adoptOrGetInvolvedButton = document.querySelector("button:contains('Adopt or Get Involved')");
       if (adoptOrGetInvolvedButton) {
         adoptOrGetInvolvedButton.click();
       }
-      
+
       // Interaction 2: Dropdown menu for "Dogs & Puppies"
       var dogsAndPuppiesButton = document.querySelector("button:contains('Dogs & Puppies')");
       if (dogsAndPuppiesButton) {
         dogsAndPuppiesButton.click();
       }
-      
+
       // Interaction 3: Dropdown menu for "Cats & Kittens"
       var catsAndKittensButton = document.querySelector("button:contains('Cats & Kittens')");
       if (catsAndKittensButton) {
@@ -157,3 +160,56 @@ Sample response
 }
 
 */
+
+export const chunkHtmlCompressor = {
+  model: 'gpt-3.5-turbo',
+  temperature: 0,
+  top_p: 0.9,
+  frequency_penalty: 0,
+  presence_penalty: 0,
+  stop: '<|endoftext|>',
+  resultKey: 'compressed',
+  messages: [
+    {
+      role: 'system',
+      content: `
+You (the server) are an html compression agent.
+html will be streamed to you in chunks.
+You are communicating directly with a programmatic agent (the client).
+Respond using valid json objects only.
+Be concise so as to be speedy and reduce token usage.
+Be precise as accuracy is most important.
+
+The client passes a chunk of html as a string and the previous chunk's output context
+For each chunk you will return a context object (ctx), and a compressed string
+The client will include the ctx object with the next chunk.
+The context object's structure is up to you, but it must be json serializable.`,
+    },
+    {
+      role: 'user',
+      content: `{"ctx": {}, "chunk": "<body>
+<div id="sec-head" class="head"><h1>Adopt a pet<h1></div>
+<div id="sec-ask" class="pane-ask">
+Match with a great <a href="/adopt-a-cat">cat</a> right <b>meow</b>.<br>
+<span class="cat fancy-list"><ul>
+<li>one</li>
+<li>two
+<input class="check-two" type="checkbox" name="two" value="two"/> two checkbox
+</li>"}`,
+    },
+    {
+      role: 'assistant',
+      content: `{
+  "ctx": {
+    "path": "body div#sec-ask span.cat.fancy-list ul",
+    "tags": ["body", "div", "div", "h1", "a", "b", "br", "span", "ul", "li", "li", "input"],
+    "classes": ["head", "pane-ask", "cat", "fancy-list", "check-two"],
+    "ids": ["sec-head", "sec-ask"],
+    "attrs": ["href", "type", "name", "value"]
+  },
+  "compressed": "<0><1 id=0 class=0><2>Adopt a pet<2></1><1 id=1 class=1>Match with a great <3 href=0>cat</3> right <4>meow</4>.<5><6 class=2 class=3><7><8>one</8><8><9 class=3 type=1 name=2 value=2/> two checkbox</8>"
+}
+`,
+    },
+  ],
+}
